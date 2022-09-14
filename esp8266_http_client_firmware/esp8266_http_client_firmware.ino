@@ -1,9 +1,10 @@
 #include <ESP8266WiFi.h>
 #include <ESP8266HTTPClient.h>
+#include <WiFiClient.h>
 
 
 #define AP_SSID "XXXXXXXXXX"
-#define AP_PASSWD  "XXXXXXXXXXXXXXX"
+#define AP_PASSWD "XXXXXXXXXXXXXXX"
  
 #define HTTP_SERVER_IP "XXX.XXX.XXX.XXX"
 #define HTTP_SERVER_ENDPOINT "XXXXXXXXXXXXXXX"
@@ -22,9 +23,9 @@
 #define SEND_MSG 2
 
 
-IPAddress ip(XXX.XXX.XXX.XXX);
-IPAddress gateway(XXX.XXX.XXX.XXX);
-IPAddress subnet(XXX.XXX.XXX.XXX);
+IPAddress ip(XXX,XXX,XXX,XXX);
+IPAddress gateway(XXX,XXX,XXX,XXX);
+IPAddress subnet(XXX,XXX,XXX,XXX);
 
 
 int state;
@@ -97,8 +98,9 @@ void sendMsg()
   data += msg;
 
   HTTPClient http;
+  WiFiClient client;
 
-  http.begin(url);
+  http.begin(client, url);
   http.addHeader("content-type", "application/x-www-form-urlencoded");
 
   int httpCode = http.POST(data);

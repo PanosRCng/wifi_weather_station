@@ -21,6 +21,8 @@
 #define SEND_MSG 1
 #define SLEEP 2
 
+#define LOW_VATTERY_THRESHOLD 3
+
 
 
 SoftwareSerial mySerial(RX_PIN, TX_PIN);
@@ -35,7 +37,7 @@ int resample_number;
 int t_sample;
 int h_sample;
 double battery_voltage;
-
+bool battery_low;
 
 
 void wakeupWifi()
@@ -125,6 +127,15 @@ void sample_battery()
   battery_voltage = ADCH;
 
   battery_voltage = battery_voltage * 0.02;
+
+  if(battery_voltage <= LOW_VATTERY_THRESHOLD)
+  {
+    battery_low = true;
+  }
+  else
+  {
+    battery_low = false;
+  }
 }
 
 
@@ -182,7 +193,7 @@ void getMsg()
   msg += "\"Humidity\": ";
   msg += h_sample;
   msg += ", ";
-  msg += "\"Battery\": ";
+  msg += "\"Light\": ";
   msg += battery_voltage;
   msg += "}";
   msg += "}";
@@ -191,7 +202,7 @@ void getMsg()
 
 
 void move2FirstState()
-{
+{  
   t_sample = 0;
   h_sample = 0;
   battery_voltage = 0;
@@ -202,7 +213,7 @@ void move2FirstState()
 
 
 void sample()
-{
+{  
   if(resample_number >= (RESAMPLE_NUMBER + 1))
   {
     getMsg();
@@ -212,6 +223,12 @@ void sample()
   }
 
   sampling();
+
+  if(battery_low)
+  {
+    state = SLEEP;
+    return;
+  }
 
   delay(DELAY_BETWEEN_SAMPLES);
 }
@@ -238,7 +255,7 @@ void sleep()
     watchdog_counter = 0;
     halfhour_counter++;
 
-    if(halfhour_counter >= 1)
+    if(halfhour_counter >= 4)
     {
       move2FirstState();
       return;
@@ -266,6 +283,8 @@ void setup()
 
   // ~ 10s
   setup_watchdog(9);
+
+  battery_low = false;
 
   move2FirstState();
 }
