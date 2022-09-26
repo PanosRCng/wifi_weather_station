@@ -105,13 +105,14 @@ void sendMsg()
 
   int httpCode = http.POST(data);
 
+  http.end();
+  client.stop();
+
   if(httpCode == HTTP_CODE_OK)
   {
     sleep();
     return;
   } 
-  
-  http.end();
 }
 
 

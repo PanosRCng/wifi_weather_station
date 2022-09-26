@@ -193,7 +193,7 @@ void getMsg()
   msg += "\"Humidity\": ";
   msg += h_sample;
   msg += ", ";
-  msg += "\"Light\": ";
+  msg += "\"Battery\": ";
   msg += battery_voltage;
   msg += "}";
   msg += "}";
